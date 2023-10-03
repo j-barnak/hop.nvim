@@ -184,7 +184,6 @@ function M.get_input_pattern(prompt, maxchar, opts)
     hs = create_hint_state(opts)
     hs.preview_ns = vim.api.nvim_create_namespace('hop_preview')
     apply_dimming(hs, opts)
-    add_virt_cur(hs.hl_ns)
   end
 
   local K_Esc = vim.api.nvim_replace_termcodes('<Esc>', true, false, true)
@@ -334,7 +333,6 @@ function M.hint_with_callback(jump_target_gtr, opts, callback)
 
   -- dim everything out, add the virtual cursor and hide diagnostics
   apply_dimming(hs, opts)
-  add_virt_cur(hs.hl_ns)
   hint.set_hint_extmarks(hs.hl_ns, hs.hints, opts)
   vim.cmd.redraw()
 

@@ -170,39 +170,6 @@ local function apply_dimming(hint_state, opts)
   end
 end
 
--- Add the virtual cursor, taking care to handle the cases where:
--- - the virtualedit option is being used and the cursor is in a
---   tab character or past the end of the line
--- - the current line is empty
--- - there are multibyte characters on the line
----@param ns number
-local function add_virt_cur(ns)
-  local prio = require('hop.priority')
-
-  local cur_info = vim.fn.getcurpos()
-  local cur_row = cur_info[2] - 1
-  local cur_col = cur_info[3] - 1 -- this gives cursor column location, in bytes
-  local cur_offset = cur_info[4]
-  local virt_col = cur_info[5] - 1
-  local cur_line = vim.api.nvim_get_current_line()
-
-  -- first check to see if cursor is in a tab char or past end of line or in empty line
-  if cur_offset ~= 0 or #cur_line == cur_col then
-    vim.api.nvim_buf_set_extmark(0, ns, cur_row, cur_col, {
-      virt_text = { { '█', 'Normal' } },
-      virt_text_win_col = virt_col,
-      priority = prio.CURSOR_PRIO,
-    })
-  else
-    vim.api.nvim_buf_set_extmark(0, ns, cur_row, cur_col, {
-      -- end_col must be column of next character, in bytes
-      end_col = vim.fn.byteidx(cur_line, vim.fn.charidx(cur_line, cur_col) + 1),
-      hl_group = 'HopCursor',
-      priority = prio.CURSOR_PRIO,
-    })
-  end
-end
-
 -- Get pattern from input for hint and preview
 ---@param prompt string
 ---@param maxchar? number
